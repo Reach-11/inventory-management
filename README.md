@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Inventory Management – Stage 1: Application foundation
 
 Spring Boot 4.0.7 · Java 25 · Gradle (Kotlin DSL) · PostgreSQL 17
@@ -72,3 +73,6 @@ docker compose down                          # stop (data kept)   |   docker com
 ```
 
 Requires the Gradle Wrapper (`gradlew`, `gradle/wrapper/*`) from Stage 1, because the Dockerfile uses it.
+=======
+# inventory-management
+>>>>>>> 61c80e945b8a90df23b23814d2d4d5e45805732f
