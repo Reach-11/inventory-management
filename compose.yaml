@@ -1,0 +1,47 @@
+# Fixed project name: containers/volumes keep the same names no matter which
+# folder runs this file (important in Jenkins, where the workspace path differs).
+name: inventory-management
+
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data   # named volume: data survives container re-creation
+    networks:
+      - backend
+    # No "ports:" on purpose: the database is reachable ONLY from other containers.
+    healthcheck:
+      # $$ -> a literal $ evaluated inside the container
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  app:
+    build: .
+    image: inventory-management:${APP_VERSION:-local}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy   # start only after PostgreSQL answers
+    environment:
+      # "db" is the service name; Compose's internal DNS resolves it to the db container.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "8081:8080"   # host:container
+    networks:
+      - backend
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:

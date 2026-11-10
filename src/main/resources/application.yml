@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: inventory-management
+  datasource:
+    # Local-development defaults. Docker Compose (Stage 2) overrides these with environment variables.
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/inventory}
+    username: ${SPRING_DATASOURCE_USERNAME:inventory}
+    password: ${SPRING_DATASOURCE_PASSWORD:inventory}
+  jpa:
+    hibernate:
+      ddl-auto: update   # creates/updates tables automatically. Fine for learning; real projects use Flyway.
+    open-in-view: false
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
