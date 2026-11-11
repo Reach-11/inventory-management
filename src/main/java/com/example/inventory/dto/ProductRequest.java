@@ -26,5 +26,6 @@ public record ProductRequest(
         @DecimalMin(value = "0.00", message = "price must not be negative")
         @Digits(integer = 10, fraction = 2, message = "price must have at most 10 digits and 2 decimals")
         BigDecimal price
+
 ) {
 }
